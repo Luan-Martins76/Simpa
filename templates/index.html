@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIMPA — Risco acadêmico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#16234a;--navy-deep:#0a1226;--navy-soft:#eef1f9;
+  --gold:#c4831a;--gold-soft:#fbf1de;
+  --red:#b23a33;--red-soft:#f8e8e6;
+  --ok:#98a2b8;--ok-soft:#eef0f5;
+  --canvas:#f6f7fb;--paper:#fff;--ink:#121826;--mute:#5b6478;--line:#e3e6ef;
+  --serif:'Fraunces',Georgia,serif;--sans:'Inter',system-ui,Arial,sans-serif;
+  --radius:10px;--radius-sm:7px;
+  --shadow:0 1px 2px rgba(15,23,41,.05),0 14px 28px -18px rgba(15,23,41,.18);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--canvas);color:var(--ink);font:16px/1.55 var(--sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* cabeçalho */
+header.topo{background:linear-gradient(165deg,var(--navy) 0%,var(--navy-deep) 100%);color:#fff;position:relative}
+header.topo::after{content:"";display:block;height:3px;background:linear-gradient(90deg,var(--ok) 0%,var(--gold) 50%,var(--red) 100%)}
+header.topo .inner{max-width:1120px;margin:0 auto;padding:44px 24px 30px}
+header.topo h1{font-family:var(--serif);font-weight:500;font-size:clamp(1.9rem,4vw,2.5rem);letter-spacing:-.01em;margin:0 0 10px}
+header.topo .sub{color:#b7c0dc;margin:0 0 30px;max-width:56ch;font-size:1rem}
+
+.chips{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid rgba(255,255,255,.14);border-radius:var(--radius);overflow:hidden;background:rgba(255,255,255,.03)}
+.chip{background:transparent;border:0;border-left:1px solid rgba(255,255,255,.1);padding:16px 18px;text-align:left;cursor:pointer;font:inherit;color:#aab4d1;position:relative;transition:background .15s ease}
+.chip:first-child{border-left:0}
+.chip:hover{background:rgba(255,255,255,.06)}
+.chip b{display:block;font-family:var(--serif);font-weight:500;font-size:clamp(1.4rem,2.6vw,1.9rem);line-height:1.1;color:#fff;letter-spacing:-.01em;font-variant-numeric:tabular-nums;margin-bottom:3px}
+.chip[data-cls="risco critico"] b{color:#ff9086}
+.chip[data-cls="ponto de atencao"] b{color:#ffcb84}
+.chip[data-cls="regular"] b{color:#c2cbe6}
+.chip[aria-pressed=true]{background:rgba(255,255,255,.1);color:#e7ebf7}
+.chip[aria-pressed=true]::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:#fff}
+
+.userbar{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin:0 0 26px;font-size:.86rem;color:#b7c0dc}
+.userbar b{color:#fff;font-weight:600}
+.userbar small{display:block;color:#8e99ba;margin-top:1px}
+.userbar button{font:inherit;font-size:.84rem;font-weight:600;color:#e7ebf7;background:transparent;border:1px solid rgba(255,255,255,.28);border-radius:var(--radius-sm);padding:7px 14px;cursor:pointer;transition:background .15s ease}
+.userbar button:hover{background:rgba(255,255,255,.1)}
+
+main{max-width:1120px;margin:0 auto;padding:28px 24px 90px}
+
+/* KPIs institucionais */
+.kpisinfo{font-size:.8rem;color:var(--mute);margin:0 0 8px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:22px}
+.kpi{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+.kpi b{display:block;font-family:var(--serif);font-weight:500;font-size:1.55rem;letter-spacing:-.01em;color:var(--navy);font-variant-numeric:tabular-nums;margin-bottom:2px}
+.kpi span{font-size:.78rem;color:var(--mute)}
+.kpi.alerta b{color:var(--red)}
+
+/* gráficos */
+.graficos{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:12px;margin-bottom:22px}
+.graf{margin:0;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow)}
+.graf figcaption b{display:block;font-family:var(--serif);font-weight:500;font-size:1.08rem;color:var(--navy)}
+.graf figcaption span{font-size:.78rem;color:var(--mute)}
+.graf svg{width:100%;height:auto;display:block;margin-top:10px}
+.graf svg text{font:11px var(--sans);fill:var(--mute)}
+.graf svg .guia{stroke:var(--mute);stroke-width:1;stroke-dasharray:4 3;opacity:.7}
+.graf svg .grade{stroke:var(--line);stroke-width:1}
+.stats{display:flex;gap:20px;flex-wrap:wrap;margin-top:10px}
+.stats div{font-size:.76rem;color:var(--mute)}
+.stats b{display:block;font-family:var(--serif);font-weight:500;font-size:1.15rem;color:var(--ink);font-variant-numeric:tabular-nums}
+.leitura{font-size:.84rem;margin:10px 0 0;padding-left:12px;border-left:3px solid var(--gold)}
+.legenda{display:flex;gap:14px;flex-wrap:wrap;font-size:.76rem;color:var(--mute);margin-top:8px}
+.legenda i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:baseline}
+
+/* barra de ferramentas */
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;position:sticky;top:0;z-index:5;background:rgba(246,247,251,.9);backdrop-filter:blur(10px);padding:14px 0;margin:-14px 0 18px}
+.search{position:relative;flex:1;min-width:220px}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--mute);pointer-events:none}
+input,select,.btn{font:inherit;font-size:.92rem;padding:10px 14px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:var(--radius-sm)}
+input[type=search]{width:100%;padding-left:36px}
+input:focus,select:focus{border-color:var(--navy)}
+select{appearance:none;padding-right:34px;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6"><path d="M1 1l4 4 4-4" stroke="%235b6478" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>');background-repeat:no-repeat;background-position:right 12px center;cursor:pointer}
+.btn{cursor:pointer;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;transition:background .15s ease,color .15s ease,border-color .15s ease}
+.btn.ghost{border-color:var(--line);color:var(--navy)}
+.btn.ghost:hover:not(:disabled){border-color:var(--navy);background:var(--navy-soft)}
+.btn:disabled{opacity:.4;cursor:default}
+#csv{background:var(--gold);border-color:var(--gold);color:#2b1c00}
+#csv:hover{background:#a86f14;border-color:#a86f14;color:#fff}
+
+#ia{background:var(--navy);border-color:var(--navy);color:#fff}
+#ia:hover:not(:disabled){background:var(--navy-deep);border-color:var(--navy-deep)}
+.relia{border:1px solid var(--line);border-left:3px solid var(--navy);background:var(--paper);border-radius:var(--radius);padding:18px 22px;margin:0 0 22px}
+.relia[hidden]{display:none}
+.relia header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}
+.relia header b{color:var(--navy)}
+.relia header small{color:var(--mute)}
+.relia .corpo{white-space:pre-wrap;line-height:1.65;font-family:var(--serif);font-size:1.02rem}
+.relia .erro{color:var(--red);font-family:var(--sans);font-size:.92rem}
+.relia .espera{color:var(--mute);font-style:italic}
+.relia footer{margin-top:12px;font-size:.78rem;color:var(--mute)}
+
+/* pesos */
+details.pesos-panel{border:1px solid var(--line);border-radius:var(--radius);padding:0 18px;margin-bottom:22px;background:var(--paper)}
+details.pesos-panel summary{cursor:pointer;font-weight:600;color:var(--navy);padding:14px 0;list-style:none;display:flex;align-items:center;gap:8px}
+details.pesos-panel summary::-webkit-details-marker{display:none}
+details.pesos-panel summary::before{content:"";width:7px;height:7px;border-right:2px solid var(--navy);border-bottom:2px solid var(--navy);transform:rotate(-45deg);transition:transform .18s ease}
+details.pesos-panel[open] summary::before{transform:rotate(45deg)}
+.pesos{display:flex;gap:18px;flex-wrap:wrap;align-items:end;padding-bottom:18px}
+.pesos label{display:grid;gap:6px;font-size:.83rem;color:var(--mute);font-weight:500}
+.pesos input{width:100px}
+#soma{font-size:.83rem;color:var(--red);align-self:center}
+
+/* tabela */
+.wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--paper);box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;min-width:640px}
+th{text-align:left;font-weight:600;color:var(--mute);padding:14px 18px;font-size:.8rem;border-bottom:1px solid var(--line)}
+td{padding:16px 18px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr.row{cursor:pointer;transition:background .12s ease}
+tr.row:hover td,tr.row:focus-visible td{background:var(--navy-soft)}
+tr:last-child td{border-bottom:0}
+td.n{color:var(--mute);width:44px;font-variant-numeric:tabular-nums}
+small{color:var(--mute)}
+
+.meter{width:118px;height:7px;border-radius:20px;background:#eceff5;display:inline-block;vertical-align:middle;margin-right:10px;overflow:hidden}
+.meter i{display:block;height:100%;border-radius:20px}
+.critico i{background:var(--red)}
+.atencao i{background:var(--gold)}
+.regular i{background:var(--ok)}
+
+td:nth-child(3){font-family:var(--serif);font-variant-numeric:tabular-nums;font-weight:500;font-size:1.05rem}
+td:nth-child(3) small{font-family:var(--sans);font-weight:600;font-size:.72rem;margin-left:4px}
+
+.det td{background:var(--canvas);padding:20px 18px 26px}
+@media(prefers-reduced-motion:no-preference){.det:not([hidden]) td{animation:reveal .22s ease}}
+@keyframes reveal{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+.fat{display:grid;grid-template-columns:190px 1fr 120px;gap:8px 16px;align-items:center;margin:6px 0;font-size:.92rem}
+.fat .meter{width:100%;margin:0}
+.mat{display:grid;grid-template-columns:1fr 210px 120px;gap:8px 16px;align-items:center;margin:8px 0;font-size:.92rem}
+.mat .meter{width:100%;margin:0}
+h3{margin:22px 0 8px;font-size:.8rem;font-weight:600;color:var(--mute);padding-top:16px;border-top:1px solid var(--line)}
+.diag{border-left:3px solid var(--gold);background:var(--gold-soft);padding:12px 16px;margin:4px 0 16px;border-radius:0 8px 8px 0;font-family:var(--serif);font-style:italic;font-size:1rem;color:var(--ink)}
+.diag b{display:block;font-style:normal;font-weight:600;font-family:var(--sans);font-size:.78rem;color:var(--mute);margin-bottom:4px}
+.diag small{display:block;margin-top:8px;font-family:var(--sans);font-style:normal;font-size:.78rem}
+
+.pag{display:flex;gap:14px;align-items:center;margin-top:20px;font-size:.88rem;color:var(--mute)}
+
+@media(max-width:640px){
+  .chips{grid-template-columns:1fr 1fr}
+  .chip:nth-child(2){border-left:1px solid rgba(255,255,255,.1)}
+  .kpis{grid-template-columns:1fr 1fr}
+  .fat,.mat{grid-template-columns:1fr}
+  header.topo .inner{padding:32px 18px 24px}
+  main{padding:22px 18px 70px}
+}
+</style>
+</head>
+<body>
+<header class="topo">
+  <div class="inner">
+    <div class="userbar">
+      <div id="quem" aria-live="polite"></div>
+      <button type="button" id="sair">Sair</button>
+    </div>
+    <h1>SIMPA</h1>
+    <p class="sub" id="sub">Quem pode reprovar (menos de 75% de frequência ou média abaixo de 6) e ainda dá tempo de agir, com base só no que já aconteceu até o ciclo escolhido. Clique em um aluno para ver o que pesou no score.</p>
+    <div class="chips" id="chips"></div>
+  </div>
+</header>
+<main>
+
+<p class="kpisinfo" id="kpisinfo"></p>
+<div class="kpis" id="kpis"></div>
+
+<section class="graficos" id="graficos" aria-label="Visão estatística da seleção" hidden>
+  <figure class="graf">
+    <figcaption><b>Como estão as médias</b><span>Distribuição da média dos alunos</span></figcaption>
+    <div class="stats" id="g1stats"></div>
+    <div id="g1"></div>
+    <p class="leitura" id="g1txt"></p>
+  </figure>
+  <figure class="graf">
+    <figcaption><b>Frequência e nota andam juntas?</b><span>Cada ponto é um aluno</span></figcaption>
+    <div class="stats" id="g2stats"></div>
+    <div id="g2"></div>
+    <div class="legenda" id="g2leg"></div>
+    <p class="leitura" id="g2txt"></p>
+  </figure>
+</section>
+
+<div class="bar">
+  <div class="search">
+    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false"><circle cx="7" cy="7" r="5.3" stroke="currentColor" stroke-width="1.4"/><path d="M11.3 11.3L15 15" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+    <input type="search" id="q" placeholder="Buscar aluno por nome" aria-label="Buscar aluno por nome">
+  </div>
+  <select id="ciclo" aria-label="Ciclo do semestre"></select>
+  <select id="curso" aria-label="Filtrar por curso"><option value="">Todos os cursos</option></select>
+  <select id="mat" aria-label="Filtrar por matéria" hidden><option value="">Todas as matérias</option></select>
+  <select id="agrup" aria-label="Agrupar por" hidden>
+    <option value="materia">Agrupar por matéria</option>
+    <option value="professor">Agrupar por professor</option>
+  </select>
+  <button class="btn ghost" id="vmat" hidden>Ver por matéria</button>
+  <button type="button" class="btn" id="ia">Gerar relatório com IA</button>
+  <a class="btn" id="csv" href="/api/risco.csv">Exportar CSV</a>
+</div>
+
+<section class="relia" id="relia" hidden aria-live="polite">
+  <header><b>Relatório da IA</b><span><small id="relmeta"></small> <button type="button" class="btn ghost" id="relfechar">Fechar</button></span></header>
+  <div class="corpo" id="relcorpo"></div>
+  <footer>Texto gerado por IA local (Ollama) a partir de um resumo dos dados filtrados na tela. Pode conter imprecisões: confira os números na tabela.</footer>
+</section>
+
+<details class="pesos-panel">
+  <summary>Pesos do indicador</summary>
+  <div class="pesos" id="pesos"></div>
+</details>
+
+<div class="wrap" id="alu">
+<table>
+  <thead><tr><th>#</th><th>Aluno</th><th>Risco</th><th>Motivo principal</th></tr></thead>
+  <tbody id="corpo"></tbody>
+</table>
+</div>
+
+<div class="pag" id="pag">
+  <button class="btn ghost" id="ant">Anterior</button>
+  <span id="info"></span>
+  <button class="btn ghost" id="prox">Próxima</button>
+</div>
+
+<div class="wrap" id="matwrap" hidden>
+<table>
+  <thead id="matthead"><tr><th>Matéria</th><th>Professor</th><th>Alunos</th><th>Média da turma</th><th>Frequência</th><th>Em risco</th><th>Risco crítico</th></tr></thead>
+  <tbody id="corpomat"></tbody>
+</table>
+<p><small id="matinfo"></small></p>
+</div>
+</main>
+
+<script>
+const NOMES={frequencia_invertida:"Risco de reprovar por falta",queda_desempenho:"Risco de reprovar por média",desvio_padrao:"Instabilidade das notas",inadimplencia:"Inadimplência"};
+const ROT={"risco critico":["critico","Risco crítico"],"ponto de atencao":["atencao","Ponto de atenção"],"regular":["regular","Regular"]};
+const PESO_ROT={w1_frequencia_invertida:"Reprovar por falta",w2_queda_desempenho:"Reprovar por média",w3_desvio_padrao:"Instabilidade",w4_inadimplencia:"Inadimplência"};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const st={q:"",curso:"",cls:"",ciclo:"",pagina:1,pesos:null,mat:"",vis:false,agrup:"materia"};
+let eu=null,filtros=null,pesosOk=false,timer,reqId=0;
+
+const pesosParam=p=>{if(st.pesos)p.set("pesos",JSON.stringify(st.pesos));return p};
+const qs=()=>pesosParam(new URLSearchParams({q:st.q,curso:st.curso,classificacao:st.cls,pagina:st.pagina,mat:st.mat,ciclo:st.ciclo}));
+const meter=(v,cls)=>`<span class="meter ${cls}"><i style="width:${Math.max(v*100,2)}%"></i></span>`;
+
+// Todas as chamadas passam por aqui: sessão expirada (401) volta para a tela de login.
+async function api(url){
+  const r=await fetch(url,{credentials:"same-origin",headers:{Accept:"application/json"}});
+  if(r.status===401){location.href="/login";throw new Error("sessao expirada")}
+  if(!r.ok)throw new Error("HTTP "+r.status);
+  return r.json();
+}
+
+async function iniciar(){
+  try{
+    const [a,b]=await Promise.all([api("/api/me"),api("/api/filtros")]);
+    eu=a;filtros=b;
+  }catch(e){
+    $("#corpo").innerHTML='<tr><td colspan="4">Não foi possível carregar os dados. Confira se o dados.db e o acesso.db existem e reinicie o servidor.</td></tr>';
+    return;
+  }
+  $("#quem").innerHTML=`<b>${esc(eu.nome)}</b> · ${esc(eu.perfil_rotulo)}<small>${esc(eu.escopo)}</small>`;
+  $("#sair").onclick=async()=>{
+    try{await fetch("/logout",{method:"POST",credentials:"same-origin",headers:{"X-CSRF-Token":eu.csrf}})}catch(e){}
+    location.href="/login";
+  };
+  if(eu.professor)$("#sub").textContent="Alunos das suas turmas, ordenados por risco de reprovar nas suas disciplinas, com base no ciclo escolhido. Clique em um aluno para ver o que pesou no score.";
+
+  // Ciclo do semestre: o sistema só enxerga o que aconteceu até o fim do ciclo escolhido.
+  const nc=eu.ciclos||3;st.ciclo=String(eu.ciclo_padrao||2);
+  $("#ciclo").innerHTML=Array.from({length:nc},(_,i)=>`<option value="${i+1}"${String(i+1)===st.ciclo?" selected":""}>Ciclo ${i+1} de ${nc}${i+1===nc?" (semestre fechado)":""}</option>`).join("");
+  // O que a interface mostra depende do que o servidor liberou para este usuário.
+  const cs=filtros.cursos;
+  if(cs.length>1)$("#curso").insertAdjacentHTML("beforeend",cs.map(c=>`<option value="${esc(c.codigo)}">${esc(c.nome.replaceAll("_"," "))}</option>`).join(""));
+  else $("#curso").hidden=true;                      // coordenador/professor: um curso só, nada a filtrar
+  $("#mat").hidden=$("#vmat").hidden=false;
+  $("#agrup").hidden=eu.professor;                   // "por professor" não faz sentido para o próprio professor
+  popMat();
+  carregar();
+}
+
+// ---- Gráficos (SVG puro, sem biblioteca: funciona offline). Os números vêm prontos de /api/indicadores. ----
+const COR_CLS={"risco critico":"var(--red)","ponto de atencao":"var(--gold)","regular":"var(--ok)"};
+const br=(v,c=1)=>Number(v).toLocaleString("pt-BR",{minimumFractionDigits:c,maximumFractionDigits:c});
+let chaveGraf="";
+
+function svgHistograma(h){
+  const W=360,H=216,m={l:34,r:18,t:16,b:34},iw=W-m.l-m.r,ih=H-m.t-m.b,bw=iw/10,max=Math.max(...h.faixas,1);
+  const barras=h.faixas.map((n,i)=>{
+    const alt=ih*n/max;
+    return `<rect x="${m.l+i*bw+1.5}" y="${m.t+ih-alt}" width="${bw-3}" height="${alt}" rx="2" fill="${i<6?"var(--red)":"var(--navy)"}"><title>Média de ${i} a ${i+1}: ${n} alunos</title></rect>`;
+  }).join("");
+  const xt=Array.from({length:11},(_,i)=>`<text x="${m.l+i*bw}" y="${m.t+ih+14}" text-anchor="middle">${i}</text>`).join("");
+  const x6=m.l+6*bw;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Histograma das médias dos alunos, de 0 a 10">
+    <line class="grade" x1="${m.l}" x2="${W-m.r}" y1="${m.t+ih}" y2="${m.t+ih}"/>${barras}
+    <line class="guia" x1="${x6}" x2="${x6}" y1="${m.t-4}" y2="${m.t+ih}"/>
+    <text x="${x6-5}" y="${m.t+4}" text-anchor="end">mínimo 6,0</text>
+    <text x="${m.l-6}" y="${m.t+ih+4}" text-anchor="end">0</text><text x="${m.l-6}" y="${m.t+8}" text-anchor="end">${max}</text>${xt}
+    <text x="${m.l+iw/2}" y="${H-2}" text-anchor="middle">média do aluno</text></svg>`;
+}
+
+function svgDispersao(d){
+  const W=360,H=250,m={l:34,r:20,t:10,b:38},iw=W-m.l-m.r,ih=H-m.t-m.b;
+  const x0=Math.floor(Math.min(...d.pontos.map(p=>p[0]),75)/10)*10,x1=100;
+  const X=v=>m.l+(v-x0)/(x1-x0)*iw,Y=v=>m.t+ih-v/10*ih;
+  const grade=[0,2,4,6,8,10].map(v=>`<line class="grade" x1="${m.l}" x2="${W-m.r}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${m.l-6}" y="${Y(v)+4}" text-anchor="end">${v}</text>`).join("");
+  const xt=[];for(let v=x0;v<=x1;v+=10)xt.push(`<text x="${X(v)}" y="${m.t+ih+15}" text-anchor="middle">${v}%</text>`);
+  const pts=d.pontos.map(([x,y,c])=>`<circle cx="${X(x)}" cy="${Y(y)}" r="2.6" fill="${COR_CLS[c]||"var(--ok)"}" fill-opacity=".55"/>`).join("");
+  const r=d.reta;
+  const reta=r?`<line x1="${X(x0)}" y1="${Y(r.intercepto+r.inclinacao*x0)}" x2="${X(x1)}" y2="${Y(r.intercepto+r.inclinacao*x1)}" stroke="var(--navy)" stroke-width="2" clip-path="url(#cpd)"/>`:"";
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Dispersão de frequência por nota média, com reta de regressão">
+    <defs><clipPath id="cpd"><rect x="${m.l}" y="${m.t}" width="${iw}" height="${ih}"/></clipPath></defs>${grade}${pts}${reta}
+    <line class="guia" x1="${X(75)}" x2="${X(75)}" y1="${m.t}" y2="${m.t+ih}"/><line class="guia" x1="${m.l}" x2="${W-m.r}" y1="${Y(6)}" y2="${Y(6)}"/>
+    <text x="${X(75)+4}" y="${m.t+10}">75%</text>${xt.join("")}
+    <text x="${m.l+iw/2}" y="${H-3}" text-anchor="middle">frequência</text></svg>`;
+}
+
+function renderGraficos(g){
+  const box=$("#graficos"),n=g.nota,f=g.frequencia;
+  if(!n||!g.dispersao.n){box.hidden=true;return}
+  box.hidden=false;
+  const stat=(v,l)=>`<div><b>${v}</b>${l}</div>`;
+  $("#g1stats").innerHTML=stat(br(n.media),"média")+stat(br(n.mediana),"mediana")+stat(br(n.desvio_padrao,2),"desvio-padrão")+stat(br(n.variancia,2),"variância");
+  $("#g1").innerHTML=svgHistograma(g.histograma);
+  $("#g1txt").textContent=g.histograma.leitura;
+  const r=g.dispersao.reta;
+  $("#g2stats").innerHTML=stat(r?br(r.r,2):"-","correlação (r)")+stat(r?br(r.inclinacao*10,1):"-","nota a cada +10 p.p.")+stat(g.dispersao.n.toLocaleString("pt-BR"),"alunos");
+  $("#g2").innerHTML=svgDispersao(g.dispersao);
+  $("#g2leg").innerHTML=Object.entries(ROT).map(([k,[,l]])=>`<span><i style="background:${COR_CLS[k]}"></i>${l}</span>`).join("")
+    +`<span>Linhas tracejadas: 75% de frequência e média 6,0${g.dispersao.amostra<g.dispersao.n?` · ${g.dispersao.amostra} pontos de amostra; r e a reta usam todos`:""}</span>`;
+  $("#g2txt").textContent=g.dispersao.leitura;
+}
+
+// Só recarrega quando muda o recorte (busca, curso, matéria, ciclo, pesos), não ao paginar nem ao clicar nos chips.
+async function carregarGraficos(id){
+  const chave=[st.q,st.curso,st.mat,st.ciclo,JSON.stringify(st.pesos)].join("|");
+  if(chave===chaveGraf)return;
+  try{
+    const g=await api("/api/indicadores?"+qs());
+    if(id!==reqId)return;
+    chaveGraf=chave;renderGraficos(g);
+  }catch(e){if(id===reqId)$("#graficos").hidden=true}
+}
+
+async function carregar(){
+  const id=++reqId;
+  try{
+    const d=await api("/api/risco?"+qs());
+    if(id!==reqId)return;                            // chegou resposta mais nova: ignora esta
+    render(d);
+    carregarGraficos(id);
+    if(st.vis)renderAgrupado();
+  }catch(e){
+    if(id===reqId)$("#corpo").innerHTML='<tr><td colspan="4">Não foi possível carregar os dados. Tente recarregar a página.</td></tr>';
+  }
+}
+
+function popMat(){
+  const ms=filtros.materias.filter(m=>!st.curso||m.curso===st.curso);
+  const comCurso=!st.curso&&filtros.cursos.length>1;
+  $("#mat").innerHTML='<option value="">Todas as matérias</option>'+ms.map(m=>
+    `<option value="${m.id}">${esc(m.disciplina)}${comCurso?" ("+esc(m.curso.replaceAll("_"," "))+")":""}</option>`).join("");
+}
+
+function renderKpis(k,financeiro){
+  const box=$("#kpis");
+  if(!k){box.hidden=true;$("#kpisinfo").hidden=true;return}
+  box.hidden=false;$("#kpisinfo").hidden=false;
+  const nomeCurso=st.curso?(filtros.cursos.find(c=>c.codigo===st.curso)||{nome:st.curso}).nome:null;
+  $("#kpisinfo").textContent="Métricas de: "+(nomeCurso?nomeCurso.replaceAll("_"," "):eu.escopo);
+  const pct=v=>v==null?"-":Math.round(v*100)+"%";
+  const itens=[
+    ["Média geral de notas",k.media_geral==null?"-":k.media_geral.toFixed(1),false],
+    ["Frequência média",pct(k.frequencia_media),k.frequencia_media!=null&&k.frequencia_media<0.75],
+    ...(financeiro?[["Inadimplência",pct(k.taxa_inadimplencia),k.taxa_inadimplencia!=null&&k.taxa_inadimplencia>0.2]]:[]),
+    ["Reprovação prevista (≥50%)",pct(k.taxa_reprovacao_prevista),k.taxa_reprovacao_prevista!=null&&k.taxa_reprovacao_prevista>0.1],
+    ["Já reprovados (sem volta)",(k.reprovacao_certa||0).toLocaleString("pt-BR"),(k.reprovacao_certa||0)>0],
+    ["Risco crítico",pct(k.taxa_evasao_proxy),k.taxa_evasao_proxy!=null&&k.taxa_evasao_proxy>0.1],
+  ];
+  box.innerHTML=itens.map(([l,v,alerta])=>`<div class="kpi${alerta?" alerta":""}"><b>${v}</b><span>${l}</span></div>`).join("");
+}
+
+// Agregação por matéria ou professor: feita no servidor, já dentro do escopo do usuário.
+// Não há registro de trancamento/abandono nos dados, então "evasão" = % de alunos em risco crítico (proxy).
+async function renderAgrupado(){
+  const modo=eu.professor?"materia":st.agrup;
+  let d;
+  try{d=await api("/api/agrupado?"+pesosParam(new URLSearchParams({modo,curso:st.curso,ciclo:st.ciclo})))}
+  catch(e){$("#corpomat").innerHTML='<tr><td colspan="7">Não foi possível carregar o agrupamento.</td></tr>';return}
+  $("#matthead").innerHTML=modo==="professor"
+    ?"<tr><th>Professor</th><th>Nº turmas</th><th>Alunos</th><th>Média geral</th><th>Frequência</th><th>Em risco</th><th>Risco crítico</th></tr>"
+    :"<tr><th>Matéria</th><th>Professor</th><th>Alunos</th><th>Média da turma</th><th>Frequência</th><th>Em risco</th><th>Risco crítico</th></tr>";
+  $("#corpomat").innerHTML=d.itens.map(a=>{
+    const media=a.media==null?"-":a.media.toFixed(1),freq=a.frequencia==null?"-":Math.round(a.frequencia*100)+"%";
+    const risco=`${meter(a.pct_risco,"atencao")}${Math.round(a.pct_risco*100)}% <small>(${a.em_risco})</small>`;
+    const evasao=`${meter(a.pct_critico,"critico")}${Math.round(a.pct_critico*100)}% <small>(${a.criticos})</small>`;
+    if(modo==="professor")return `<tr><td>${esc(a.docente)}</td><td>${a.turmas}</td><td>${a.alunos}</td><td>${media}</td><td>${freq}</td><td>${risco}</td><td>${evasao}</td></tr>`;
+    return `<tr><td>${esc(a.disciplina)}<br><small>${esc(a.curso_nome.replaceAll("_"," "))}</small></td><td>${esc(a.docente)}</td><td>${a.alunos}</td><td>${media}</td><td>${freq}</td><td>${risco}</td><td>${evasao}</td></tr>`;
+  }).join("")||'<tr><td colspan="7">Nenhum dado para este filtro.</td></tr>';
+  const rotulo=modo==="professor"?"professores":"matérias";
+  $("#matinfo").textContent=`Mostrando ${d.itens.length} de ${d.total} ${rotulo}, ordenadas pela fatia de alunos em risco crítico de reprovar.`;
+}
+
+function destaque(mats){
+  // Compara as matérias do próprio aluno entre si: aponta se a queda/faltas parecem concentradas numa disciplina.
+  if(mats.length<2)return"";
+  const notas=mats.filter(m=>m.media!=null),freqs=mats.filter(m=>m.total>0).map(m=>[m,100*m.presencas/m.total]);
+  const fora=[];
+  if(notas.length>=2){
+    const avg=notas.reduce((a,m)=>a+m.media,0)/notas.length;
+    notas.forEach(m=>{if(m.media<avg-1.5)fora.push([m.disciplina,avg-m.media,`nota ${m.media.toFixed(1)}`])});
+  }
+  if(freqs.length>=2){
+    const avg=freqs.reduce((a,[,v])=>a+v,0)/freqs.length;
+    freqs.forEach(([m,v])=>{if(v<avg-20)fora.push([m.disciplina,avg-v,`frequência ${Math.round(v)}%`])});
+  }
+  if(!fora.length)return"";
+  fora.sort((a,b)=>b[1]-a[1]);
+  const vistos=new Set(),itens=[];
+  for(const [disc,,motivo] of fora){
+    if(vistos.has(disc))continue;
+    vistos.add(disc);itens.push(`${esc(disc)} (${motivo})`);
+    if(itens.length===2)break;
+  }
+  return ` Parece concentrado em: ${itens.join(", ")}.`;
+}
+
+function render(d){
+  const c=d.contagem;
+  const chips=[["","Todos",d.total],["risco critico","Risco crítico",c["risco critico"]],["ponto de atencao","Ponto de atenção",c["ponto de atencao"]],["regular","Regular",c["regular"]]];
+  $("#chips").innerHTML=chips.map(([k,l,n])=>`<button class="chip" data-cls="${k}" aria-pressed="${st.cls===k}"><b>${n.toLocaleString("pt-BR")}</b>${l}</button>`).join("");
+  $("#csv").href="/api/risco.csv?"+qs();
+  renderKpis(d.kpis,d.visao.financeiro);
+
+  if(!pesosOk){
+    pesosOk=true;
+    // Os pesos vêm do servidor já no formato do perfil (o professor não tem o peso de inadimplência).
+    $("#pesos").innerHTML=Object.entries(d.pesos).map(([k,v])=>`<label>${PESO_ROT[k]}<input type="number" min="0" max="1" step="0.05" name="${k}" value="${v}"></label>`).join("")
+      +'<span id="soma"></span><button class="btn ghost" id="aplicar">Recalcular</button><button class="btn ghost" id="padrao">Restaurar padrão</button>';
+  }
+  $("#soma").textContent="";
+  $("#corpo").innerHTML=d.itens.length?d.itens.map((r,i)=>{
+    const [k,l]=ROT[r.classificacao];
+    const fat=r.fatores.map(f=>`<div class="fat"><span>${NOMES[f.fator]}</span><span>${esc(f.motivo)}</span><span>${meter(f.peso*f.valor,k)}</span></div>`).join("");
+    const mats=r.materias||[];
+    const mt=mats.length?"<h3>Por matéria</h3>"+mats.map(m=>`<div class="mat"><span>${esc(m.disciplina)}<br><small>${esc(m.docente)}</small></span><span>média ${m.media==null?"-":m.media.toFixed(1)}, frequência ${m.total?Math.round(100*m.presencas/m.total)+"%":"-"}</span>${meter(m.total?1-m.presencas/m.total:0,k)}</div>`).join(""):"";
+    const al=(r.alertas&&r.alertas.length)?"<h3>Disciplinas em risco de reprovar</h3>"+r.alertas.map(a=>`<div class="fat"><span>${esc(a.disciplina)}${a.consumada?" <b>(já reprovado)</b>":""}</span><span>${esc(a.detalhe)}</span><span>${Math.round(a.prob*100)}% de chance</span></div>`).join(""):"";
+    const diag=r.diagnostico?`<div class="diag"><b>Hipótese de causa provável:</b> ${esc(r.diagnostico)}${destaque(mats)}<small>Heurística a partir dos padrões numéricos — não substitui conversa com o aluno ou consulta à secretaria.</small></div>`:"";
+    return `<tr class="row" tabindex="0"><td class="n">${d.inicio+i+1}</td><td>${esc(r.nome)}<br><small>${esc(r.curso_nome.replaceAll("_"," "))}, ${r.periodo}º período</small></td>
+      <td>${meter(r.score,k)}${r.score.toFixed(2)} <small>${l}${r.reprovacao_certa?" · já reprovado":""}</small></td><td>${esc(r.motivo_principal)}</td></tr>
+      <tr class="det" hidden><td></td><td colspan="3">${diag}${al}${fat}${mt}</td></tr>`}).join("")
+    :'<tr><td colspan="4">Nenhum aluno encontrado com esses filtros.</td></tr>';
+  $("#info").textContent=`Página ${d.pagina} de ${d.paginas}`;
+  $("#ant").disabled=d.pagina<=1;$("#prox").disabled=d.pagina>=d.paginas;
+}
+
+// Relatório conversacional: manda os filtros atuais (mesma seleção do CSV) e mostra o texto devolvido.
+$("#ia").onclick=async()=>{
+  const btn=$("#ia"),box=$("#relia"),corpo=$("#relcorpo");
+  btn.disabled=true;btn.textContent="Gerando relatório...";
+  box.hidden=false;$("#relmeta").textContent="";
+  corpo.innerHTML='<span class="espera">A IA está analisando os dados. Isso pode levar alguns segundos...</span>';
+  box.scrollIntoView({behavior:"smooth",block:"nearest"});
+  try{
+    const r=await fetch("/api/relatorio?"+qs(),{method:"POST",credentials:"same-origin",headers:{"X-CSRF-Token":eu.csrf,Accept:"application/json"}});
+    if(r.status===401){location.href="/login";return}
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(d.erro||"Erro ao gerar o relatório (HTTP "+r.status+").");
+    corpo.textContent=d.relatorio;                    // textContent: nada que a IA escreva vira HTML
+    $("#relmeta").textContent=`${d.total.toLocaleString("pt-BR")} alunos · modelo ${d.modelo}`;
+  }catch(e){
+    corpo.innerHTML='<span class="erro">'+esc(e.message)+'</span>';
+  }finally{
+    btn.disabled=false;btn.textContent="Gerar relatório com IA";
+  }
+};
+$("#relfechar").onclick=()=>{$("#relia").hidden=true};
+
+const ir=()=>{st.pagina=1;carregar()};
+$("#chips").onclick=e=>{const b=e.target.closest(".chip");if(b){st.cls=b.dataset.cls;ir()}};
+$("#q").oninput=e=>{clearTimeout(timer);timer=setTimeout(()=>{st.q=e.target.value;ir()},250)};
+$("#ciclo").onchange=e=>{st.ciclo=e.target.value;ir()};
+$("#curso").onchange=e=>{st.curso=e.target.value;st.mat="";popMat();ir()};
+$("#mat").onchange=e=>{st.mat=e.target.value;ir()};
+$("#agrup").onchange=e=>{st.agrup=e.target.value;if(st.vis)renderAgrupado()};
+$("#vmat").onclick=()=>{
+  st.vis=!st.vis;$("#vmat").textContent=st.vis?"Ver alunos":"Ver por matéria";
+  ["#alu","#pag","#chips"].forEach(x=>$(x).hidden=st.vis);$("#matwrap").hidden=!st.vis;
+  if(st.vis)renderAgrupado();
+};
+$("#ant").onclick=()=>{st.pagina--;carregar()};
+$("#prox").onclick=()=>{st.pagina++;carregar()};
+const alt=e=>{const tr=e.target.closest("tr.row");if(tr)tr.nextElementSibling.hidden=!tr.nextElementSibling.hidden};
+$("#corpo").onclick=alt;
+$("#corpo").onkeydown=e=>{if(e.key==="Enter")alt(e)};
+$("#pesos").onclick=e=>{
+  if(e.target.id==="padrao"){st.pesos=null;pesosOk=false;ir()}
+  if(e.target.id==="aplicar"){
+    const p={};$("#pesos").querySelectorAll("input").forEach(i=>p[i.name]=parseFloat(i.value)||0);
+    st.pesos=p;ir();
+    const s=Object.values(p).reduce((a,b)=>a+b,0);
+    if(Math.abs(s-1)>1e-6)setTimeout(()=>$("#soma").textContent=`Soma dos pesos: ${s.toFixed(2)} (o ideal é 1,00)`,300);
+  }
+};
+iniciar();
+</script>
+</body>
+</html>

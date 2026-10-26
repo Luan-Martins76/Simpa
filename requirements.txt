@@ -1,0 +1,22 @@
+# ============================================================
+#  SIMPA - dependências do projeto
+#  Python 3.9+ (o código usa str.removeprefix)
+#
+#  Instalar:  pip install -r requirements.txt
+# ============================================================
+
+# --- Servidor web ---------------------------------------------
+# Flask: rotas, sessão, cookies e a API JSON
+Flask>=3.0,<4.0
+# Werkzeug: hash de senha (generate/check_password_hash). Já vem com o Flask,
+# mas o login/ importa direto, então fica declarado.
+Werkzeug>=3.0,<4.0
+
+# --- Relatório com IA (Ollama) --------------------------------
+# requests: chamadas HTTP para o Ollama local (ia/relatorio_ia.py)
+requests>=2.31,<3.0
+
+# --- Dados de demonstração ------------------------------------
+# Faker: gera nomes, e-mails e telefones fictícios (pt_BR) ao criar os bancos.
+# Só é usado em `python -m dados_prototipo.gerar_simpa_db`.
+Faker>=24.0
