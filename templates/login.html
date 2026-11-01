@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="pt-BR">
-<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Entrar — SIMPA</title>
@@ -9,8 +8,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --navy:#16234a;--navy-deep:#0a1226;--gold:#c4831a;--red:#b23a33;--ok:#98a2b8;
-  --canvas:#f6f7fb;--paper:#fff;--ink:#121826;--mute:#5b6478;--line:#e3e6ef;
+  --navy:#16234a;--navy-deep:#0a1226;--gold:#fdfdfd;--red:#070a33;--ok:#98a2b8;
+  --ink:#fff;--mute:#b7c0dc;--line:rgba(255,255,255,.18);
   --serif:'Fraunces',Georgia,serif;--sans:'Inter',system-ui,Arial,sans-serif;
   --radius:10px;--radius-sm:7px;
 }
@@ -18,51 +17,75 @@
 html,body{height:100%}
 body{margin:0;font:16px/1.55 var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;
   background:linear-gradient(165deg,var(--navy) 0%,var(--navy-deep) 100%);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+  display:flex;align-items:center;justify-content:flex-end;
+  padding:24px clamp(24px,8vw,128px);position:relative;min-height:100vh;overflow-x:hidden}
+
+/* Cena: o morcego à esquerda, o painel de login no escuro à direita */
+body::before{content:"";position:fixed;inset:0;z-index:-2;
+  background:url(/fundo-login.jpg) left center/auto 100% no-repeat #0a1226;
+  -webkit-mask-image:linear-gradient(90deg,#000 55%,transparent 98%);
+  mask-image:linear-gradient(90deg,#000 55%,transparent 98%)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;
+  background:linear-gradient(90deg,rgba(10,18,38,0) 25%,rgba(10,18,38,.72) 70%,rgba(10,18,38,.9) 100%)}
+
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-.marca{text-align:center;color:#fff;margin-bottom:26px}
+.coluna{width:100%;max-width:380px}
+.marca{margin-bottom:22px}
 .marca h1{font-family:var(--serif);font-weight:500;font-size:2.6rem;letter-spacing:-.01em;margin:0 0 6px}
-.marca p{margin:0;color:#b7c0dc;font-size:.95rem;max-width:34ch}
-.cartao{width:100%;max-width:380px;background:var(--paper);border-radius:var(--radius);padding:28px 26px 24px;
-  box-shadow:0 24px 48px -24px rgba(0,0,0,.55);position:relative;overflow:hidden}
+.marca p{margin:0;color:var(--mute);font-size:.95rem;max-width:34ch}
+
+.cartao{background:rgba(10,18,38,.7);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  border:1px solid var(--line);border-radius:var(--radius);padding:28px 26px 24px;
+  box-shadow:0 24px 48px -24px rgba(0,0,0,.7);position:relative;overflow:hidden}
 .cartao::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;
   background:linear-gradient(90deg,var(--ok) 0%,var(--gold) 50%,var(--red) 100%)}
-h2{font-size:1.05rem;font-weight:600;margin:0 0 18px;color:var(--navy)}
+h2{font-size:1.05rem;font-weight:600;margin:0 0 18px;color:#fff}
 label{display:block;font-size:.83rem;font-weight:500;color:var(--mute);margin:0 0 6px}
 .campo{margin-bottom:16px}
 input{width:100%;font:inherit;font-size:.95rem;padding:11px 14px;border:1px solid var(--line);
-  border-radius:var(--radius-sm);background:#fff;color:var(--ink)}
-input:focus{border-color:var(--navy)}
+  border-radius:var(--radius-sm);background:rgba(255,255,255,.07);color:#fff}
+input:focus{border-color:var(--gold);background:rgba(255,255,255,.11)}
 button{width:100%;font:inherit;font-weight:600;font-size:.95rem;padding:12px 14px;border:0;cursor:pointer;
   border-radius:var(--radius-sm);background:var(--gold);color:#2b1c00;transition:background .15s ease,color .15s ease}
 button:hover{background:#a86f14;color:#fff}
-.erro{background:#f8e8e6;border-left:3px solid var(--red);color:#7a1f19;padding:10px 14px;
+.erro{background:rgba(178,58,51,.22);border-left:3px solid var(--red);color:#ffd9d5;padding:10px 14px;
   border-radius:0 8px 8px 0;font-size:.88rem;margin:0 0 18px}
-.rodape{margin-top:18px;font-size:.78rem;color:#8e99ba;text-align:center}
+.rodape{margin:18px 0 0;font-size:.78rem;color:#9aa5c6}
+
+@media (max-width:760px){
+  body{justify-content:center;padding:24px}
+  body::before{background-position:30% 20%}
+  body::after{background:linear-gradient(180deg,rgba(10,18,38,.25) 0%,rgba(10,18,38,.85) 55%,rgba(10,18,38,.95) 100%)}
+  .marca{text-align:center}
+  .marca p{margin-inline:auto}
+  .rodape{text-align:center}
+}
 </style>
 </head>
 <body>
-<div class="marca">
-  <h1>SIMPA</h1>
-  <p>Indicador de risco acadêmico</p>
+<div class="coluna">
+  <div class="marca">
+    <h1>SIMPA</h1>
+    <p>Sistema Inteligente de Monitoramento e Predição Acadêmica</p>
+  </div>
+  <main class="cartao">
+    <h2>Entrar</h2>
+    {% if erro %}<p class="erro" role="alert">{{ erro }}</p>{% endif %}
+    <form method="post" action="/login">
+      <input type="hidden" name="csrf" value="{{ csrf }}">
+      <div class="campo">
+        <label for="login">Login</label>
+        <input id="login" name="login" type="text" value="{{ login }}" required maxlength="100"
+               autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" autofocus>
+      </div>
+      <div class="campo">
+        <label for="senha">Senha</label>
+        <input id="senha" name="senha" type="password" required maxlength="256" autocomplete="current-password">
+      </div>
+      <button type="submit">Entrar</button>
+    </form>
+  </main>
+  <p class="rodape">© 2026 Grupo 01. Todos os direitos reservados.<br>SIMPA, MVP versão 2.9.0.64</p>
 </div>
-<main class="cartao">
-  <h2>Entrar</h2>
-  {% if erro %}<p class="erro" role="alert">{{ erro }}</p>{% endif %}
-  <form method="post" action="/login">
-    <input type="hidden" name="csrf" value="{{ csrf }}">
-    <div class="campo">
-      <label for="login">Login</label>
-      <input id="login" name="login" type="text" value="{{ login }}" required maxlength="100"
-             autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" autofocus>
-    </div>
-    <div class="campo">
-      <label for="senha">Senha</label>
-      <input id="senha" name="senha" type="password" required maxlength="256" autocomplete="current-password">
-    </div>
-    <button type="submit">Entrar</button>
-  </form>
-</main>
-<p class="rodape">Cada conta enxerga apenas os dados do seu perfil.</p>
 </body>
 </html>

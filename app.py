@@ -60,6 +60,10 @@ def criar_app():
         resp.headers.setdefault("X-Frame-Options", "DENY")
         return resp
 
+    @app.get("/fundo-login.jpg")
+    def fundo_login():
+        return send_from_directory(os.path.join(app.root_path, "static"), "morcego.jpg")
+    
     # ---- seleção de dados já dentro do escopo do usuário ------------------------------------
     def ciclo_pedido():
         """Ciclo do semestre que o usuário quer ver (1 a 3). Valor inválido cai no padrão."""
@@ -200,7 +204,7 @@ def main():
     predicao.obter_resultados(DB_DADOS_PATH, dict(predicao.PESOS_PADRAO), predicao.CICLO_PADRAO)   # aquece o cache
     port = int(os.environ.get("SIMPA_PORT", 5000))
     print(f"SIMPA em http://127.0.0.1:{port}")
-    app.run(host="127.0.0.1", port=port, debug=False, threaded=True)
+    app.run(host="127.0.0.1", port=port, debug=True, threaded=True)
 
 
 if __name__ == "__main__":
