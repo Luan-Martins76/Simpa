@@ -7,8 +7,18 @@ from flask import (Blueprint, abort, current_app, g, jsonify, make_response,
 
 from login.auth import abrir_acesso, autenticar, carregar_usuario
 from login.escopo import resolver_escopo
+from login import termo
 
 bp = Blueprint("login", __name__)
+
+
+@bp.record_once
+def _preparar_aceite(state):
+    conn = abrir_acesso(state.app.config["DB_ACESSO_PATH"])
+    try:
+        termo.garantir_tabela(conn)
+    finally:
+        conn.close()
 
 
 # CSRF (o login e o logout são POST; as APIs de dados são só GET) 
@@ -27,7 +37,7 @@ def csrf_ok():
 # sessão 
 def carregar_sessao():
     """Preenche g.usuario e g.escopo a partir do cookie de sessão (ou deixa None)."""
-    g.usuario, g.escopo = None, None
+    g.usuario, g.escopo, g.aceite_em = None, None, None
     uid = session.get("uid")
     if uid is None:
         return
@@ -38,12 +48,14 @@ def carregar_sessao():
             session.clear()
             return
         g.usuario, g.escopo = usuario, resolver_escopo(conn, usuario)
+        g.aceite_em = termo.aceite_em(conn, usuario.id_usuario)
     finally:
         conn.close()
 
 
-def login_obrigatorio(api=False):
-    """api=True responde 401 em JSON; api=False redireciona para /login."""
+def login_obrigatorio(api=False, exige_termo=True):
+    """api=True responde 401 em JSON; api=False redireciona para /login.
+    exige_termo=True: sem o termo de privacidade aceito, API responde 403 e página vai para /privacidade."""
     def decorador(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
@@ -52,6 +64,10 @@ def login_obrigatorio(api=False):
                 if api:
                     return jsonify(erro="nao_autenticado"), 401
                 return redirect(url_for("login.entrar"))
+            if exige_termo and g.aceite_em is None:
+                if api:
+                    return jsonify(erro="termo_pendente"), 403
+                return redirect(url_for("login.privacidade"))
             return f(*args, **kwargs)
         return wrapper
     return decorador
@@ -89,6 +105,35 @@ def entrar():
     session.permanent = True
     session["uid"] = usuario.id_usuario
     csrf_token()
+    return redirect("/")
+
+
+def _pagina_termo(erro=None, status=200):
+    u = g.usuario
+    resp = make_response(render_template(
+        "privacidade.html", erro=erro, csrf=csrf_token(), nome=u.nome.split()[0],
+        versao=termo.TERMO_VERSAO, ja_aceitou=g.aceite_em is not None, aceite_em=g.aceite_em,
+        demo=termo.AMBIENTE_DEMO, controlador=termo.CONTROLADOR,
+        contato=termo.CONTATO_ENCARREGADO), status)
+    resp.headers["Cache-Control"] = "no-store"
+    return resp
+
+
+@bp.route("/privacidade", methods=["GET", "POST"])
+@login_obrigatorio(exige_termo=False)
+def privacidade():
+    if request.method == "GET":
+        return _pagina_termo()
+    if not csrf_ok():
+        abort(400)
+    if g.aceite_em is None:
+        if request.form.get("aceite") != "sim":
+            return _pagina_termo("Marque a caixa de confirmação para continuar.", 400)
+        conn = abrir_acesso(current_app.config["DB_ACESSO_PATH"])
+        try:
+            termo.registrar_aceite(conn, g.usuario.id_usuario)
+        finally:
+            conn.close()
     return redirect("/")
 
 

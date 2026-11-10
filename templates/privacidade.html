@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacidade e uso de dados — SIMPA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#16234a;--navy-deep:#0a1226;--hi:#fdfdfd;--red:#e0645c;--ok:#98a2b8;
+  --ink:#fff;--mute:#b7c0dc;--line:rgba(255,255,255,.18);
+  --serif:'Fraunces',Georgia,serif;--sans:'Inter',system-ui,Arial,sans-serif;
+  --radius:10px;--radius-sm:7px;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;font:16px/1.55 var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;
+  background:linear-gradient(165deg,var(--navy) 0%,var(--navy-deep) 100%);
+  display:flex;justify-content:flex-end;padding:32px clamp(20px,8vw,128px);position:relative;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-2;
+  background:url(/fundo-login.jpg) left center/auto 100% no-repeat #0a1226;
+  -webkit-mask-image:linear-gradient(90deg,#000 55%,transparent 98%);mask-image:linear-gradient(90deg,#000 55%,transparent 98%)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;
+  background:linear-gradient(90deg,rgba(10,18,38,0) 20%,rgba(10,18,38,.78) 60%,rgba(10,18,38,.92) 100%)}
+:focus-visible{outline:2px solid var(--hi);outline-offset:2px}
+.coluna{width:100%;max-width:660px}
+.marca h1{font-family:var(--serif);font-weight:500;font-size:2.2rem;letter-spacing:-.01em;margin:0 0 4px}
+.marca p{margin:0 0 18px;color:var(--mute);font-size:.95rem}
+
+.cartao{background:rgba(10,18,38,.74);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  border:1px solid var(--line);border-radius:var(--radius);padding:26px 26px 22px;position:relative;overflow:hidden;
+  box-shadow:0 24px 48px -24px rgba(0,0,0,.7)}
+.cartao::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;
+  background:linear-gradient(90deg,var(--ok) 0%,var(--hi) 50%,#070a33 100%)}
+h2{font-size:1.1rem;font-weight:600;margin:0 0 6px}
+.lead{margin:0 0 16px;color:var(--mute);font-size:.92rem}
+.demo{display:inline-block;margin:0 0 14px;padding:4px 10px;border:1px solid var(--line);border-radius:99px;
+  font-size:.75rem;color:var(--mute);background:rgba(255,255,255,.06)}
+
+.resumo{list-style:none;margin:0 0 18px;padding:0;display:grid;gap:10px}
+.resumo li{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;font-size:.93rem;
+  background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:var(--radius-sm);padding:11px 14px}
+.resumo b{display:block;font-weight:600}
+.resumo span.n{font-family:var(--serif);font-size:1.3rem;line-height:1.1;color:var(--ok)}
+.resumo small{color:var(--mute);font-size:.85rem}
+
+details{border-top:1px solid var(--line)}
+details:last-of-type{border-bottom:1px solid var(--line)}
+summary{cursor:pointer;list-style:none;padding:12px 2px;font-weight:600;font-size:.93rem;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--mute);font-weight:400;font-size:1.2rem;line-height:1}
+details[open] summary::after{content:"–"}
+.corpo{padding:0 2px 14px;font-size:.88rem;color:#d7ddf0}
+.corpo p{margin:0 0 8px}
+.corpo ul{margin:0 0 8px;padding-left:18px}
+.corpo li{margin-bottom:4px}
+.tab{overflow-x:auto;margin:4px 0 8px}
+table{border-collapse:collapse;width:100%;font-size:.82rem;min-width:460px}
+th,td{text-align:left;vertical-align:top;padding:7px 10px;border-bottom:1px solid var(--line)}
+th{color:var(--mute);font-weight:600;white-space:nowrap}
+
+.aceite{margin-top:18px}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:.9rem;color:#fff;margin:0 0 14px;cursor:pointer}
+.check input{width:20px;height:20px;margin:2px 0 0;flex:none;accent-color:#fdfdfd}
+.acoes{display:flex;gap:10px;flex-wrap:wrap}
+button,.link{font:inherit;font-weight:600;font-size:.95rem;padding:12px 18px;border-radius:var(--radius-sm);cursor:pointer;text-decoration:none;text-align:center;
+  transition:background .15s ease,opacity .15s ease}
+.primario{flex:1;min-width:180px;border:0;background:var(--hi);color:var(--navy-deep)}
+.primario:hover:not(:disabled){background:#dfe5f7}
+.primario:disabled{opacity:.4;cursor:not-allowed}
+.sec{border:1px solid var(--line);background:transparent;color:var(--mute)}
+.sec:hover{background:rgba(255,255,255,.08);color:#fff}
+.erro{background:rgba(178,58,51,.22);border-left:3px solid var(--red);color:#ffd9d5;padding:10px 14px;border-radius:0 8px 8px 0;font-size:.88rem;margin:0 0 16px}
+.ok{color:var(--mute);font-size:.88rem;margin:18px 0 12px}
+.rodape{margin:16px 0 0;font-size:.76rem;color:#9aa5c6}
+
+@media (max-width:760px){
+  body{justify-content:center;padding:20px}
+  body::before{background-position:30% 0}
+  body::after{background:linear-gradient(180deg,rgba(10,18,38,.4) 0%,rgba(10,18,38,.9) 40%,rgba(10,18,38,.96) 100%)}
+  .cartao{padding:22px 18px 18px}
+}
+</style>
+</head>
+<body>
+<div class="coluna">
+  <div class="marca">
+    <h1>SIMPA</h1>
+    <p>Olá, {{ nome }}. Antes de usar o sistema, uma leitura rápida.</p>
+  </div>
+
+  <main class="cartao">
+    <h2>Privacidade e uso de dados (LGPD)</h2>
+    <p class="lead">O SIMPA trata dados pessoais de alunos. Esse é o resumo; os detalhes estão logo abaixo, é só abrir.</p>
+    {% if demo %}<span class="demo">Ambiente de demonstração: os dados de alunos são fictícios</span>{% endif %}
+    {% if erro %}<p class="erro" role="alert">{{ erro }}</p>{% endif %}
+
+    <ul class="resumo">
+      <li><span class="n">1</span><div><b>O que usamos</b><small>Dados de identificação, acadêmicos e financeiros dos alunos, mais o seu login e o registro dos seus acessos.</small></div></li>
+      <li><span class="n">2</span><div><b>Para quê</b><small>Antecipar o risco de reprovação durante o semestre, para dar tempo de agir. O score é apoio, não decisão nem punição.</small></div></li>
+      <li><span class="n">3</span><div><b>Quem vê</b><small>Cada perfil só vê o seu escopo. O professor nunca vê dado financeiro.</small></div></li>
+      <li><span class="n">4</span><div><b>Seu compromisso</b><small>Usar os dados só para essa finalidade e cuidar de qualquer arquivo que você exportar.</small></div></li>
+    </ul>
+
+    <details>
+      <summary>Os seus dados de acesso</summary>
+      <div class="corpo">
+        <ul>
+          <li>Guardamos seu login, nome, perfil e escopo (setor, secretaria, curso ou turmas). A senha fica só como hash, nunca em texto.</li>
+          <li>Registramos cada tentativa de entrada: o login digitado, data e hora (UTC) e se deu certo ou não. Serve para segurança e para o bloqueio temporário após 5 falhas em 10 minutos.</li>
+          <li>Usamos um cookie de sessão necessário (expira em 8 horas) e um token contra CSRF. Não há cookies de publicidade nem de rastreamento.</li>
+          <li>Ao aceitar este termo, guardamos seu usuário, a versão do termo e a data e hora do aceite.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>Os dados de alunos que o SIMPA trata</summary>
+      <div class="corpo">
+        <div class="tab"><table>
+          <thead><tr><th>Categoria</th><th>O que é</th><th>Quem vê</th></tr></thead>
+          <tbody>
+            <tr><td>Identificação</td><td>Nome, curso e período. Telefone e e-mail ficam no cadastro, mas não aparecem nas telas, no CSV nem no relatório com IA.</td><td>Todos, dentro do escopo</td></tr>
+            <tr><td>Acadêmicos</td><td>Matrícula em turmas, notas e frequência por aula.</td><td>Todos, dentro do escopo</td></tr>
+            <tr><td>Financeiros</td><td>Situação dos boletos (pago ou pendente).</td><td>Todos, menos o professor</td></tr>
+            <tr><td>Calculados</td><td>Score de risco, classificação, chance de reprovar, motivo principal e hipótese de causa.</td><td>Todos, dentro do escopo (professor sem o fator financeiro)</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Para que os dados são usados</summary>
+      <div class="corpo">
+        <p>Finalidade única: identificar, com base só no que já aconteceu até o ciclo escolhido, quem pode reprovar (frequência abaixo de 75% ou média abaixo de 6) enquanto ainda dá tempo de agir.</p>
+        <ul>
+          <li>O score é uma estimativa estatística, não uma nota nem uma sanção.</li>
+          <li>Nenhuma decisão é tomada automaticamente. Qualquer ação é humana, e a hipótese de causa precisa ser confirmada conversando com o aluno.</li>
+          {% if demo %}<li>Neste protótipo, os pesos do score são provisórios e ainda serão calibrados com a secretaria.</li>{% endif %}
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>Quem vê o quê</summary>
+      <div class="corpo">
+        <div class="tab"><table>
+          <thead><tr><th>Perfil</th><th>Escopo</th></tr></thead>
+          <tbody>
+            <tr><td>Administrador e Reitor geral</td><td>Todos os cursos</td></tr>
+            <tr><td>Reitor de setor</td><td>Cursos de todas as secretarias do setor</td></tr>
+            <tr><td>Secretário</td><td>Cursos da secretaria</td></tr>
+            <tr><td>Coordenador</td><td>Cursos que coordena</td></tr>
+            <tr><td>Professor</td><td>Só alunos das suas turmas, sem dado financeiro</td></tr>
+          </tbody>
+        </table></div>
+        <p>A conta é individual. Sem vínculo definido, o perfil não vê nada.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Relatório com IA</summary>
+      <div class="corpo">
+        <ul>
+          <li>O relatório é gerado por um modelo de IA que roda localmente (Ollama), no próprio servidor. Na configuração atual, nada é enviado a serviços de IA externos.</li>
+          <li>O modelo recebe um resumo da sua seleção: indicadores gerais, as matérias com mais risco e até 15 alunos mais críticos, com nome, curso, período, score, motivo e hipótese de causa.</li>
+          <li>Os números são calculados pelo sistema; a IA só redige o texto. Ela pode errar, então confira na tabela.</li>
+          <li>Para o professor, nenhum dado financeiro vai para a IA.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>Exportação em CSV</summary>
+      <div class="corpo">
+        <p>O CSV traz id, nome, curso, período, score, classificação, chance de reprovar, motivo principal e hipótese de causa. Depois de exportado, o arquivo é de sua responsabilidade: guarde com segurança, não envie por canais pessoais e apague quando não precisar mais.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Serviços de terceiros</summary>
+      <div class="corpo">
+        <p>As fontes de letra vêm do Google Fonts. Ao abrir as telas, seu navegador se conecta ao Google, que recebe seu endereço IP. Dados de alunos não passam por terceiros.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Seus compromissos como usuário</summary>
+      <div class="corpo">
+        <ul>
+          <li>Usar os dados só para a finalidade descrita aqui.</li>
+          <li>Não compartilhar seu login e senha.</li>
+          <li>Consultar apenas alunos de que você precisa para o seu trabalho.</li>
+          <li>Sair do sistema ao terminar, principalmente em computador compartilhado.</li>
+          <li>Avisar o encarregado em caso de vazamento, acesso indevido ou perda de arquivo exportado.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>Direitos dos titulares, controlador e contato</summary>
+      <div class="corpo">
+        <p>O controlador dos dados é a <b>{{ controlador }}</b>. Os alunos têm os direitos do art. 18 da LGPD: confirmar o tratamento, acessar e corrigir seus dados, pedir anonimização ou eliminação quando couber, saber com quem os dados são compartilhados e pedir revisão de decisões baseadas em tratamento automatizado.</p>
+        <p>Os dados são mantidos pelo tempo necessário à finalidade acadêmica, conforme a política de retenção da instituição.</p>
+        <p>Dúvidas e solicitações:
+          {% if contato %}<a href="mailto:{{ contato }}" style="color:#fff">{{ contato }}</a> (encarregado de dados).
+          {% else %}fale com o encarregado de dados pelo canal oficial de privacidade da instituição.{% endif %}</p>
+      </div>
+    </details>
+
+    {% if ja_aceitou %}
+      <p class="ok">Você aceitou esta versão do termo ({{ versao }}) em {{ aceite_em }} (UTC).</p>
+      <div class="acoes"><a class="link primario" href="/">Voltar ao painel</a></div>
+    {% else %}
+      <form class="aceite" method="post" action="/privacidade">
+        <input type="hidden" name="csrf" value="{{ csrf }}">
+        <label class="check">
+          <input type="checkbox" id="aceite" name="aceite" value="sim">
+          <span>Li e entendi como o SIMPA usa dados pessoais e me comprometo a usá-los só para essa finalidade.</span>
+        </label>
+        <div class="acoes">
+          <button type="submit" class="primario" id="continuar" disabled>Continuar</button>
+          <button type="submit" class="sec" form="saida">Sair</button>
+        </div>
+      </form>
+      <form id="saida" method="post" action="/logout"><input type="hidden" name="csrf" value="{{ csrf }}"></form>
+    {% endif %}
+  </main>
+  <p class="rodape">Termo de privacidade, versão {{ versao }}. © 2026 Grupo 01.</p>
+</div>
+{% if not ja_aceitou %}
+<script>
+  const chk=document.getElementById("aceite"),btn=document.getElementById("continuar");
+  chk.addEventListener("change",()=>{btn.disabled=!chk.checked});
+</script>
+{% endif %}
+</body>
+</html>
